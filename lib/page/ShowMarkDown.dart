@@ -1,3 +1,4 @@
+import 'package:drop_anchor/tool/SecuritySetState.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
@@ -10,7 +11,7 @@ class ShowMarkDown extends StatefulWidget {
   }
 }
 
-class ShowMarkDownState extends State<ShowMarkDown> {
+class ShowMarkDownState extends SecurityState<ShowMarkDown> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +20,15 @@ class ShowMarkDownState extends State<ShowMarkDown> {
       ),
       body: Markdown(
         data: v1mdstr,
+        selectable: true,
         physics: BouncingScrollPhysics(),
+        onTapLink: (String text, String? href, String title) {
+          print([
+            text,
+            href ?? null,
+            title,
+          ]);
+        },
       ),
     );
   }

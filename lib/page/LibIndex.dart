@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:drop_anchor/tool/SecuritySetState.dart';
 import 'package:drop_anchor/tool/TextInputFilter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ class LibIndex extends StatefulWidget {
   }
 }
 
-class LibIndexState extends State<LibIndex> {
+class LibIndexState extends SecurityState<LibIndex> {
   Widget createAutoInput({
     String preText = '',
     bool showEdit = false,
@@ -22,7 +23,7 @@ class LibIndexState extends State<LibIndex> {
     TextEditingController? textEditingController,
     TextStyle? textStyle,
   }) {
-    return StatefulBuilder(
+    return SecurityStatefulBuilder(
         builder: (bc, ns) => FittedBox(
               child: Container(
                 child: Row(
@@ -79,13 +80,15 @@ class LibIndexState extends State<LibIndex> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 createAutoInput(
-                    showEdit: true,
-                    textEditingController: AppDataSourceElem
-                        .listServerNameConMap[sourceElem.token()]!['editName'],
-                    textStyle: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    )),
+                  showEdit: true,
+                  textEditingController: AppDataSourceElem
+                      .listServerNameConMap[sourceElem.token()]!['editName'],
+                  textStyle: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+
                 createAutoInput(
                   textEditingController:
                       TextEditingController(text: '源: ' + sourceElem.source),
@@ -160,7 +163,6 @@ class LibIndexState extends State<LibIndex> {
                     height: 24,
                   ),
                 ),
-
               ],
             ),
           ),
@@ -274,7 +276,7 @@ class LibIndexState extends State<LibIndex> {
                         ),
                       ))
                   .toList(),
-              StatefulBuilder(builder: (bc, ns) {
+              SecurityStatefulBuilder(builder: (bc, ns) {
                 updateButtonState = () => ns(() => null);
                 return Container(
                   width: double.infinity,

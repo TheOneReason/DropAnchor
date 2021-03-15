@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-
+import 'package:drop_anchor/tool/SecuritySetState.dart';
 import 'BookIndex.dart';
 import 'LibIndex.dart';
+import 'Setting.dart';
 import 'ShowMarkDown.dart';
 
 class IndexFrame extends StatefulWidget {
@@ -9,7 +10,7 @@ class IndexFrame extends StatefulWidget {
     ShowMarkDown(),
     BookIndex(),
     LibIndex(),
-    Scaffold(),
+    Setting(),
   ];
 
   IndexFrame() {}
@@ -20,77 +21,79 @@ class IndexFrame extends StatefulWidget {
   }
 }
 
-class IndexFrameState extends State<IndexFrame> {
-  int showPageIndex = 0;
-  late PageController pageController;
-  Function? setBottomBarState;
+class IndexFrameState extends SecurityState<IndexFrame>
+    with TickerProviderStateMixin {
+  late TabController tabController;
 
   IndexFrameState() {
-    pageController = PageController(initialPage: showPageIndex);
+    tabController = TabController(length: 4, vsync: this);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: PageView(
-          controller: pageController,
+        body: TabBarView(
+          controller: tabController,
           children: this.widget.showPageList,
-          onPageChanged: (index) {
-            showPageIndex = index;
-            (setBottomBarState ?? () => null)();
-          },
         ),
-        bottomNavigationBar: StatefulBuilder(
-          builder: (bc, ns) {
-            setBottomBarState = () => ns(() => null);
-            return BottomNavigationBar(
-              // type: BottomNavigationBarType.shifting,
-              // showSelectedLabels: false,
-              // showUnselectedLabels: false,
-              // selectedFontSize: 0,
-              // unselectedFontSize: 0,
-              type: BottomNavigationBarType.fixed,
-              unselectedItemColor: Colors.black45,
-              selectedItemColor: Colors.black45,
-              currentIndex: showPageIndex,
-              onTap: (index) {
-                showPageIndex = index;
-                pageController.animateToPage(
-                  showPageIndex,
-                  curve: Curves.ease,
-                  duration: Duration(milliseconds: 500),
-                );
-                (setBottomBarState ?? () => null)();
-              },
-              items: [
-                BottomNavigationBarItem(
-                    icon: Image.asset(
-                      "./assets/redb.png",
-                      width: 36,
-                    ),
-                    label: "Show"),
-                BottomNavigationBarItem(
-                    icon: Image.asset(
-                      "./assets/redsb.png",
-                      width: 36,
-                    ),
-                    label: "Index"),
-                BottomNavigationBarItem(
-                    icon: Image.asset(
-                      "./assets/blues.png",
-                      width: 36,
-                    ),
-
-                    label: "Lib"),
-                BottomNavigationBarItem(
-                    icon: Image.asset(
-                      "./assets/setting.png",
-                      width: 36,
-                    ),
-                    label: "Setting"),
+        bottomNavigationBar: TabBar(
+          labelColor: Colors.black,
+          controller: tabController,
+          indicatorWeight: 3.0,
+          tabs: [
+            Column(
+              children: [
+                Image.asset(
+                  "./assets/redb.png",
+                  width: 36,
+                ),
+                SizedBox(
+                  height: 2,
+                ),
+                Text("Show"),
               ],
-            );
-          },
+              mainAxisSize: MainAxisSize.min,
+            ),
+            Column(
+              children: [
+                Image.asset(
+                  "./assets/redsb.png",
+                  width: 36,
+                ),
+                SizedBox(
+                  height: 2,
+                ),
+                Text("Index"),
+              ],
+              mainAxisSize: MainAxisSize.min,
+            ),
+            Column(
+              children: [
+                Image.asset(
+                  "./assets/blues.png",
+                  width: 36,
+                ),
+                SizedBox(
+                  height: 2,
+                ),
+                Text("Lib"),
+              ],
+              mainAxisSize: MainAxisSize.min,
+            ),
+            Column(
+              children: [
+                Image.asset(
+                  "./assets/setting.png",
+                  width: 36,
+                ),
+                SizedBox(
+                  height: 2,
+                ),
+                Text("Setting"),
+              ],
+              mainAxisSize: MainAxisSize.min,
+            )
+          ],
         ));
   }
 }

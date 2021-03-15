@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import '';
+import 'package:provider/provider.dart';
 
-class IndexSource {
+class IndexSource  {
   int type;
   String path;
   late List<IndexSource> child;

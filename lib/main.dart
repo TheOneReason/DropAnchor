@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:drop_anchor/page/IndexFrame.dart';
 import 'package:drop_anchor/data.dart';
+import 'package:provider/provider.dart';
+
 void main() {
-  runApp(AppFrame());
+  runApp(
+      AppFrame(),
+  );
 }
 
 class AppFrame extends StatelessWidget {
@@ -14,10 +18,11 @@ class AppFrame extends StatelessWidget {
           statusBarColor: Colors.transparent,
           systemNavigationBarIconBrightness: Brightness.dark),
     );
+
     return MaterialApp(
       theme: ThemeData(
         primaryColor: Colors.white,
-        appBarTheme: AppBarTheme(elevation: 3,shadowColor: Colors.black26),
+        appBarTheme: AppBarTheme(elevation: 0, shadowColor: Colors.black26),
         primaryTextTheme: TextTheme(
           bodyText1: TextStyle(
             color: Colors.black,

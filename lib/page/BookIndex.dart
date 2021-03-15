@@ -1,40 +1,14 @@
-import 'dart:convert';
-
+import 'package:drop_anchor/data.dart';
 import 'package:flutter/material.dart';
 import 'package:drop_anchor/model/IndexSource.dart';
-import '../mddata.dart';
+import 'package:provider/provider.dart';
 
-IndexSource getIndex() {
-  final deres = jsonDecode(bookPaht);
-  return IndexSource.createIndexSource(deres);
-}
-
-class BookIndex extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return BookIndexState();
-  }
-}
-
-class BookIndexState extends State<BookIndex> {
-  late IndexSource startIndexSource;
-  late IndexSource rootSource;
-  late List<String> path;
+class BookIndex extends StatelessWidget {
   static String separatorChar = '/';
 
-  BookIndexState() {
-    path = [];
-  }
+  BookIndex() {}
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    startIndexSource = getIndex();
-    rootSource = startIndexSource;
-  }
-
-  IndexSource goInPath(List<String> startP) {
+  IndexSource goInPath(List<String> startP, IndexSource rootSource) {
     final goPathList = startP;
     var nowNode = rootSource;
     if (goPathList.last == '..') {
@@ -49,7 +23,8 @@ class BookIndexState extends State<BookIndex> {
         }
         if (ii == nowNode.child.length) {
           print(
-              'no find ${goPathList.join('/')}\nnow path ${goPathList.sublist(0, i).join('/')}');
+            'no find ${goPathList.join('/')}\nnow path ${goPathList.sublist(0, i).join('/')}',
+          );
           return nowNode;
         }
       }
@@ -59,59 +34,69 @@ class BookIndexState extends State<BookIndex> {
 
   @override
   Widget build(BuildContext context) {
-    print(path);
-    List<IndexSource> iss = [];
-    if (path.isNotEmpty) {
-      iss.add(IndexSource(0, "..", []));
-    }
-    iss.addAll(startIndexSource.child);
-    return Scaffold(
-      appBar: AppBar(
-        title: Container(
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-          child: Text("/${path.join("/")}"),
-          width: double.infinity,
-        ),
-        actions: [
-          SizedBox(
-            width: 30,
-            child: Image.asset(
-              "assets/infoi.png",
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: AppDataSourceElem),
+      ],
+      child: StatefulBuilder(builder: (bc, ns) {
+        List<IndexSource> iss = [];
+        if (bc.read<AppDataSource>().showPath.isNotEmpty) {
+          iss.add(IndexSource(0, "..", []));
+        }
+        if (bc.read<AppDataSource>().nowIndexSource != null) {
+          iss.addAll(bc.read<AppDataSource>().nowIndexSource!.child);
+        }
+        return Scaffold(
+          appBar: AppBar(
+            title: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              child: Text("/${bc.watch<AppDataSource>().showPath.join("/")}"),
+              width: double.infinity,
             ),
+            actions: [
+              SizedBox(
+                width: 30,
+                child: Image.asset(
+                  "assets/infoi.png",
+                ),
+              ),
+              const SizedBox(
+                width: 20,
+              ),
+            ],
           ),
-          SizedBox(
-            width: 20,
+          body: Column(
+            children: [
+              Expanded(
+                child: ListView(
+                  physics: BouncingScrollPhysics(),
+                  children: iss
+                      .map(
+                        (e) => InkWell(
+                          child: e.createView(),
+                          onTap: () {
+                            switch (e.type) {
+                              case 0:
+                                AppDataSourceElem.showPath.add(e.path);
+                                AppDataSourceElem.nowIndexSource = goInPath(
+                                  AppDataSourceElem.showPath,
+                                  AppDataSourceElem.useIndexSource!,
+                                );
+                                AppDataSourceElem.notifyListeners();
+                                break;
+                              case 1:
+                                break;
+                            }
+                          },
+                        ),
+                      )
+                      .toList(),
+                ),
+              )
+            ],
           ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              physics: BouncingScrollPhysics(),
-              children: iss
-                     .map(
-                    (e) => InkWell(
-                      child: e.createView(),
-                      onTap: () {
-                        switch (e.type) {
-                          case 0:
-                            setState(() {
-                              path.add(e.path);
-                              startIndexSource = goInPath(path);
-                            });
-                            break;
-                          case 1:
-                            break;
-                        }
-                      },
-                    ),
-                  )
-                  .toList(),
-            ),
-          )
-        ],
-      ),
+        );
+      }),
     );
   }
 }

@@ -1,20 +1,31 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:drop_anchor/mddata.dart';
+import 'package:drop_anchor/page/BookIndex.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:drop_anchor/model/IndexSource.dart';
 import 'package:drop_anchor/model/ServerSource.dart';
 import 'package:drop_anchor/persist.dart';
 
-class AppDataSource with ChangeNotifier, DiagnosticableTreeMixin {
+
+
+IndexSource deIndex(String pathStruct) {
+  final deres = jsonDecode(pathStruct);
+  return IndexSource.createIndexSource(deres);
+}
+
+class AppDataSource with ChangeNotifier, DiagnosticableTreeMixin   {
   late final List<ServerSource> listServer;
 
   late final Map<String, Map<String, TextEditingController>>
       listServerNameConMap = new Map();
   late final Future initState;
   late final PersistData listServerData;
-
+  late List<String> showPath=[];
+  IndexSource? useIndexSource;
+  IndexSource? nowIndexSource;
 
   AppDataSource() {
     initState = Future(() async {
@@ -30,6 +41,9 @@ class AppDataSource with ChangeNotifier, DiagnosticableTreeMixin {
               .toList();
 
       listServer.forEach((element) => addListServerCont(element));
+
+      this.useIndexSource= deIndex(bookPathData);
+      this.nowIndexSource=this.useIndexSource;
       await this.saveServer();
     });
   }
@@ -59,7 +73,6 @@ class AppDataSource with ChangeNotifier, DiagnosticableTreeMixin {
     editNameCon.text = serverSource.name;
     listServerNameConMap[serverSource.token()] = createMap;
   }
-
 
 }
 

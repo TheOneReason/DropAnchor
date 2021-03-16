@@ -17,7 +17,7 @@ class IndexSource  {
   }
 
   Widget createView() {
-    return ListTile(
+    return  ListTile(
       title: Text(
         this.path,
         style: TextStyle(fontSize: 16),
@@ -26,7 +26,6 @@ class IndexSource  {
         child: typeLogo(this.type),
         width: 40,
       ),
-
     );
   }
 

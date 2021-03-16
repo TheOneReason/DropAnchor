@@ -3,33 +3,64 @@ import 'package:flutter/material.dart';
 import 'package:drop_anchor/model/IndexSource.dart';
 import 'package:provider/provider.dart';
 
-class BookIndex extends StatelessWidget {
-  static String separatorChar = '/';
-
-  BookIndex() {}
-
-  IndexSource goInPath(List<String> startP, IndexSource rootSource) {
-    final goPathList = startP;
-    var nowNode = rootSource;
-    if (goPathList.last == '..') {
-      goPathList.removeLast();
-      goPathList.removeLast();
-    }
-    for (int i = 0; i < goPathList.length; i++) {
-      for (int ii = 0; ii < nowNode.child.length; ii++) {
-        if (nowNode.child[ii].path == goPathList[i]) {
-          nowNode = nowNode.child[ii];
-          break;
-        }
-        if (ii == nowNode.child.length) {
-          print(
-            'no find ${goPathList.join('/')}\nnow path ${goPathList.sublist(0, i).join('/')}',
-          );
-          return nowNode;
-        }
+IndexSource goInPath(List<String> startP, IndexSource rootSource) {
+  final goPathList = startP;
+  var nowNode = rootSource;
+  if (goPathList.last == '..') {
+    goPathList.removeLast();
+    goPathList.removeLast();
+  }
+  for (int i = 0; i < goPathList.length; i++) {
+    for (int ii = 0; ii < nowNode.child.length; ii++) {
+      if (nowNode.child[ii].path == goPathList[i]) {
+        nowNode = nowNode.child[ii];
+        break;
+      }
+      if (ii == nowNode.child.length) {
+        print(
+          'no find ${goPathList.join('/')}\nnow path ${goPathList.sublist(0, i).join('/')}',
+        );
+        return nowNode;
       }
     }
-    return nowNode;
+  }
+  return nowNode;
+}
+
+class BookIndex extends StatelessWidget {
+  BookIndex() {}
+
+  createLibChild(List<IndexSource> childData) {
+    return Column(
+      children: [
+        Expanded(
+          child: ListView(
+            physics: BouncingScrollPhysics(),
+            children: childData
+                .map(
+                  (e) => InkWell(
+                    child: e.createView(),
+                    onTap: () {
+                      switch (e.type) {
+                        case 0:
+                          AppDataSourceElem.showPath.add(e.path);
+                          AppDataSourceElem.nowIndexSource = goInPath(
+                            AppDataSourceElem.showPath,
+                            AppDataSourceElem.useIndexSource!,
+                          );
+                          AppDataSourceElem.notifyListeners();
+                          break;
+                        case 1:
+                          break;
+                      }
+                    },
+                  ),
+                )
+                .toList(),
+          ),
+        )
+      ],
+    );
   }
 
   @override
@@ -39,12 +70,9 @@ class BookIndex extends StatelessWidget {
         ChangeNotifierProvider.value(value: AppDataSourceElem),
       ],
       child: StatefulBuilder(builder: (bc, ns) {
-        List<IndexSource> iss = [];
-        if (bc.read<AppDataSource>().showPath.isNotEmpty) {
-          iss.add(IndexSource(0, "..", []));
-        }
+        List<IndexSource> rootChild = [];
         if (bc.read<AppDataSource>().nowIndexSource != null) {
-          iss.addAll(bc.read<AppDataSource>().nowIndexSource!.child);
+          rootChild.addAll(bc.read<AppDataSource>().nowIndexSource!.child);
         }
         return Scaffold(
           appBar: AppBar(
@@ -65,36 +93,7 @@ class BookIndex extends StatelessWidget {
               ),
             ],
           ),
-          body: Column(
-            children: [
-              Expanded(
-                child: ListView(
-                  physics: BouncingScrollPhysics(),
-                  children: iss
-                      .map(
-                        (e) => InkWell(
-                          child: e.createView(),
-                          onTap: () {
-                            switch (e.type) {
-                              case 0:
-                                AppDataSourceElem.showPath.add(e.path);
-                                AppDataSourceElem.nowIndexSource = goInPath(
-                                  AppDataSourceElem.showPath,
-                                  AppDataSourceElem.useIndexSource!,
-                                );
-                                AppDataSourceElem.notifyListeners();
-                                break;
-                              case 1:
-                                break;
-                            }
-                          },
-                        ),
-                      )
-                      .toList(),
-                ),
-              )
-            ],
-          ),
+          body: createLibChild(rootChild),
         );
       }),
     );

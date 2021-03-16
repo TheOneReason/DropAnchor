@@ -47,10 +47,10 @@ class IndexFrameState extends SecurityState<IndexFrame>
                   "./assets/redb.png",
                   width: 36,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 2,
                 ),
-                Text("Show"),
+                const Text("Show"),
               ],
               mainAxisSize: MainAxisSize.min,
             ),
@@ -60,10 +60,10 @@ class IndexFrameState extends SecurityState<IndexFrame>
                   "./assets/redsb.png",
                   width: 36,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 2,
                 ),
-                Text("Index"),
+                const Text("Index"),
               ],
               mainAxisSize: MainAxisSize.min,
             ),
@@ -73,10 +73,10 @@ class IndexFrameState extends SecurityState<IndexFrame>
                   "./assets/blues.png",
                   width: 36,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 2,
                 ),
-                Text("Lib"),
+                const Text("Lib"),
               ],
               mainAxisSize: MainAxisSize.min,
             ),
@@ -86,10 +86,10 @@ class IndexFrameState extends SecurityState<IndexFrame>
                   "./assets/setting.png",
                   width: 36,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 2,
                 ),
-                Text("Setting"),
+                const Text("Setting"),
               ],
               mainAxisSize: MainAxisSize.min,
             )

@@ -29,6 +29,7 @@ class AppDataSource with ChangeNotifier, DiagnosticableTreeMixin   {
 
   AppDataSource() {
     initState = Future(() async {
+      //use vir data
       listServerData = await Persist.usePersist("LIBDATA", jsonEncode([]));
 
       List<Map<String, dynamic>> LibList =
@@ -36,16 +37,20 @@ class AppDataSource with ChangeNotifier, DiagnosticableTreeMixin   {
               .map((e) => Map<String, dynamic>.from(e))
               .toList();
 
+
       this.listServer =
           LibList.map((e) => ServerSource(e['source'], e['name'], e['port']))
               .toList();
-
+      //create init con
       listServer.forEach((element) => addListServerCont(element));
 
-      this.useIndexSource= deIndex(bookPathData);
-      this.nowIndexSource=this.useIndexSource;
       await this.saveServer();
     });
+
+
+    //use vir data
+    this.useIndexSource= deIndex(bookPathData);
+    this.nowIndexSource=this.useIndexSource;
   }
 
   Future saveServer() async {

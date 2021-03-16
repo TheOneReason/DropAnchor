@@ -116,3 +116,6 @@ To see more about debugMode on Flame, please refer to the [Debug Docs](https://g
 """;
 
 final bookPathData="""{"type":0,"path":"/","child":[{"type":1,"path":"你好世界","child":null},{"type":0,"path":"2020-10-12Doc","child":[{"type":1,"path":"2020-10-12DocFile","child":null}]},{"type":0,"path":"2020-10-13Doc","child":[{"type":1,"path":"2020-10-13DocFile","child":null}]},{"type":0,"path":"2020-10-14Doc","child":[{"type":1,"path":"2020-10-14DocFile","child":null}]}]}""";
+
+
+final mackUrl = "https://2fcf92c9-4765-4b13-8039-335adcd58c98.mock.pstmn.io";

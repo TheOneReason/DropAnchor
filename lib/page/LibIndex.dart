@@ -72,107 +72,117 @@ class LibIndexState extends SecurityState<LibIndex> {
   }
 
   Widget createLibCard(ServerSource sourceElem, AppDataSource appDataSource) {
-    return Card(
-      child: Stack(
-        children: [
-          Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Container(
+      child: Material(
+        color: Colors.white,
+        child: InkWell(
+          onLongPress: () {
+          },
+          child: Card(
+            elevation: 0,
+            color: Colors.transparent,
+            child: Stack(
               children: [
-                createAutoInput(
-                  showEdit: true,
-                  textEditingController: AppDataSourceElem
-                      .listServerNameConMap[sourceElem.token()]!['editName'],
-                  textStyle: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-
-                createAutoInput(
-                  textEditingController:
-                      TextEditingController(text: '源: ' + sourceElem.source),
-                  textStyle: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black54,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  useStatic: false,
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                ElevatedButtonTheme(
-                  data: ElevatedButtonThemeData(
-                    style: ButtonStyle(
-                      elevation: MaterialStateProperty.all(0),
-                      backgroundColor: MaterialStateProperty.all(
-                        Colors.amber,
-                      ),
-                    ),
-                  ),
-                  child: FittedBox(
-                    child: SizedBox(
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        child: Text('查询'),
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(1),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 0,
-                            vertical: 0,
-                          ),
+                Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      createAutoInput(
+                        showEdit: true,
+                        textEditingController:
+                            AppDataSourceElem.listServerNameConMap[
+                                sourceElem.token()]!['editName'],
+                        textStyle: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                      height: 30,
-                      width: 100,
-                    ),
+                      createAutoInput(
+                        textEditingController: TextEditingController(
+                            text: '源: ' + sourceElem.source),
+                        textStyle: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black54,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        useStatic: false,
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      ElevatedButtonTheme(
+                        data: ElevatedButtonThemeData(
+                          style: ButtonStyle(
+                            elevation: MaterialStateProperty.all(0),
+                            backgroundColor: MaterialStateProperty.all(
+                              Colors.amber,
+                            ),
+                          ),
+                        ),
+                        child: FittedBox(
+                          child: SizedBox(
+                            child: ElevatedButton(
+                              onPressed: () {},
+                              child: Text('查询'),
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(1),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 0,
+                                  vertical: 0,
+                                ),
+                              ),
+                            ),
+                            height: 30,
+                            width: 100,
+                          ),
+                        ),
+                      )
+                    ],
                   ),
-                )
-              ],
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 14, vertical: 16),
-          ),
-          Positioned(
-            right: 10,
-            top: 10,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                PopupMenuButton<Function>(
-                  padding: EdgeInsets.all(0),
-                  onSelected: (f) {
-                    f();
-                  },
-                  itemBuilder: (BuildContext context) => [
-                    PopupMenuItem(
-                      child: Text('删除'),
-                      height: 25,
-                      value: () {
-                        AppDataSourceElem.deleteServer(sourceElem).then(
-                          (value) => setState(() => null),
-                        );
-                      },
-                    ),
-                  ],
-                  child: Image.asset(
-                    "assets/menu.png",
-                    width: 24,
-                    height: 24,
+                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+                ),
+                Positioned(
+                  right: 10,
+                  top: 10,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      PopupMenuButton<Function>(
+                        padding: EdgeInsets.all(0),
+                        onSelected: (f) {
+                          f();
+                        },
+                        itemBuilder: (BuildContext context) => [
+                          PopupMenuItem(
+                            child: Text('删除'),
+                            height: 25,
+                            value: () {
+                              AppDataSourceElem.deleteServer(sourceElem).then(
+                                (value) => setState(() => null),
+                              );
+                            },
+                          ),
+                        ],
+                        child: Image.asset(
+                          "assets/menu.png",
+                          width: 24,
+                          height: 24,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
+            margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(1))),
           ),
-        ],
+        ),
       ),
-      elevation: 5,
-      shadowColor: Colors.black38,
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(1))),
+      decoration: BoxDecoration(color: Colors.white),
     );
   }
 
@@ -196,10 +206,10 @@ class LibIndexState extends SecurityState<LibIndex> {
                       "assets/blues.png",
                       height: 40,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
-                    Text(
+                    const Text(
                       "创建库链接",
                       style: TextStyle(
                         fontWeight: FontWeight.w700,

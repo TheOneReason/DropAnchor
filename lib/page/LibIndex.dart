@@ -151,6 +151,11 @@ class LibIndexState extends SecurityState<LibIndex> {
                     children: [
                       PopupMenuButton<Function>(
                         padding: EdgeInsets.all(0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            3,
+                          ),
+                        ),
                         onSelected: (f) {
                           f();
                         },

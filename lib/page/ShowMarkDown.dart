@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../data.dart';
 import '../mddata.dart';
+import 'Edit.dart';
 
 class ShowMarkDown extends StatefulWidget {
   @override
@@ -67,6 +68,25 @@ class ShowMarkDownState extends SecurityState<ShowMarkDown> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text('is MarkDown Title'),
+        actions: [
+          IconButton(
+            iconSize: 28,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (bc) => Edit(),
+                ),
+              );
+            },
+            icon: Image.asset(
+              "assets/edit-file.png",
+            ),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+        ],
       ),
       drawer: createDrawer(),
       drawerEdgeDragWidth: 250,

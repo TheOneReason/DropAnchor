@@ -47,7 +47,7 @@ class IndexFrameState extends SecurityState<IndexFrame>
                   width: 36,
                 ),
                 const SizedBox(
-                  height: 2,
+                  height: 1,
                 ),
                 const Text("Show"),
               ],
@@ -60,7 +60,7 @@ class IndexFrameState extends SecurityState<IndexFrame>
                   width: 36,
                 ),
                 const SizedBox(
-                  height: 2,
+                  height: 1,
                 ),
                 const Text("Lib"),
               ],
@@ -73,13 +73,14 @@ class IndexFrameState extends SecurityState<IndexFrame>
                   width: 36,
                 ),
                 const SizedBox(
-                  height: 2,
+                  height: 1,
                 ),
                 const Text("Setting"),
               ],
               mainAxisSize: MainAxisSize.min,
             )
           ],
-        ));
+        ),
+    );
   }
 }

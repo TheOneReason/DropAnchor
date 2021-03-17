@@ -20,6 +20,7 @@ class AppFrame extends StatelessWidget {
     );
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: Colors.white,
         appBarTheme: AppBarTheme(elevation: 0, shadowColor: Colors.black26),

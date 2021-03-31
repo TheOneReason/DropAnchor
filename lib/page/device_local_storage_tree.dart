@@ -29,10 +29,9 @@ class DeviceLocalStorageTree extends StatelessWidget {
                 }
                 return ListView(
                   children: [
-                    BookIndex.createLibChild(
-                      DeviceLocalStorage.getOnlyElem.rootIndexSource!.child,
+                    BookIndex(
                       rootIndexSource:
-                          DeviceLocalStorage.getOnlyElem.rootIndexSource,
+                          DeviceLocalStorage.getOnlyElem.rootIndexSource!,
                       useServerSource:
                           DeviceLocalStorage.getOnlyElem.serverSource,
                     )

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+typedef voidCallBack = void Function() ;
+
 class FreePopupMenuButton<T> extends StatefulWidget {
   const FreePopupMenuButton({
     Key? key,
@@ -18,6 +20,7 @@ class FreePopupMenuButton<T> extends StatefulWidget {
     this.shape,
     this.color,
     this.enableFeedback,
+    this.onTap,
   })  : assert(itemBuilder != null),
         assert(offset != null),
         assert(enabled != null),
@@ -50,6 +53,7 @@ class FreePopupMenuButton<T> extends StatefulWidget {
   final bool? enableFeedback;
 
   final double? iconSize;
+  final voidCallBack? onTap;
 
   @override
   FreePopupMenuButtonState<T> createState() => FreePopupMenuButtonState<T>();
@@ -115,12 +119,14 @@ class FreePopupMenuButtonState<T> extends State<FreePopupMenuButton<T>> {
       return GestureDetector(
         child: widget.child ?? Icon(Icons.adaptive.more),
         onLongPress:  widget.enabled ? showButtonMenu : null,
+        onTap: this.widget.onTap,
       );
 
     return Container(
       child: GestureDetector(
         child: widget.icon ?? Icon(Icons.adaptive.more),
         onLongPress:  widget.enabled ? showButtonMenu : null,
+        onTap: this.widget.onTap,
       ),
       padding: widget.padding,
       width: widget.iconSize ?? 24.0,

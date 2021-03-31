@@ -58,7 +58,7 @@ class ServerSourceBase implements Token, StorageSystemInteractiveInterface {
   }
 
   @override
-  Future<bool> uploadFile() {
+  Future<bool> uploadFile(IndexSource indexSource) {
     // TODO: implement uploadFile
     throw UnimplementedError();
   }

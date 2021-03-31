@@ -3,7 +3,8 @@ import 'dart:async';
 import 'index_source.dart';
 
 abstract class StorageSystemInteractiveInterface {
-  Future<bool> uploadFile() {
+
+  Future<bool> uploadFile(IndexSource indexSource) {
     throw UnimplementedError();
   }
 

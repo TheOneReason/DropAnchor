@@ -71,6 +71,7 @@ class FreeExpansionPanelRadio extends FreeExpansionPanel {
     required Widget body,
     bool canTapOnHeader = false,
     Color? backgroundColor,
+    Function? onTap
   })  : assert(value != null),
         super(
           body: body,

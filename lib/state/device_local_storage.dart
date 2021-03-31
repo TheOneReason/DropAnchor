@@ -15,7 +15,7 @@ class LocalStorageServerSource implements ServerSourceBase {
   String agreement = "";
 
   @override
-  String name = "";
+  String name = "LocalStorage";
 
   @override
   int port = 0;
@@ -88,7 +88,9 @@ class LocalStorageServerSource implements ServerSourceBase {
   }
 
   @override
-  Future<bool> uploadFile() {
+  Future<bool> uploadFile(IndexSource newIndexSource) {
+    // newIndexSource.getCompletePath();
+    // DeviceLocalStorage.getOnlyElem.getIndexSourceFileSystemPath(newIndexSource);
     // TODO: implement uploadFile
     throw UnimplementedError();
   }

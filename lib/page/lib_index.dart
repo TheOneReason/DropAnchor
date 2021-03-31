@@ -123,11 +123,13 @@ class LibIndexState extends SecurityState<LibIndex> {
                               SizedBox(
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    setState(() => appDataSource
-                                            .activationIndexSourceManage
-                                            .fromRemoteServerReadIndexSource(
-                                                sourceElem)
-                                            .then((value) {
+                                    setState(
+                                      () => appDataSource
+                                          .activationIndexSourceManage
+                                          .fromRemoteServerReadIndexSource(
+                                              sourceElem)
+                                          .then(
+                                        (value) {
                                           showDialog(
                                             context: context,
                                             builder: (bc) => AlertDialog(
@@ -147,7 +149,9 @@ class LibIndexState extends SecurityState<LibIndex> {
                                               ),
                                             ),
                                           );
-                                        }));
+                                        },
+                                      ),
+                                    );
                                   },
                                   child: Text('查询'),
                                   style: ElevatedButton.styleFrom(

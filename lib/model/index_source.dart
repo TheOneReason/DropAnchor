@@ -10,9 +10,15 @@ class IndexSource {
   int type;
   String name;
   late final IndexSource? parent;
-  late List<IndexSource> child;
+  late List<IndexSource> _child;
   late bool isOpenChildList = false;
   late final int fileType;
+
+  List<IndexSource> get child=>_child;
+  set child(List<IndexSource> v){
+    v.sort((a,b)=>a.type-b.type);
+    _child=v;
+  }
 
   IndexSource(this.type, this.name, dynamic child,
       {required this.parent, required this.fileType}) {

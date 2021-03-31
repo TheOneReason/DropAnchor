@@ -4,7 +4,9 @@ import 'dart:math';
 import 'package:drop_anchor/model/index_source.dart';
 import 'package:drop_anchor/model/remote_data_source.dart';
 import 'package:drop_anchor/model/server_source.dart';
+import 'package:drop_anchor/page/book_index.dart';
 import 'package:drop_anchor/page/preview.dart';
+import 'package:drop_anchor/state/device_local_storage.dart';
 import 'package:drop_anchor/tool/security_set_state.dart';
 import 'package:drop_anchor/widget/textField/free_text_field.dart';
 import 'package:flutter/cupertino.dart';
@@ -72,9 +74,10 @@ class Edit extends StatelessWidget {
                             Column(
                               children: [
                                 createOperationMenu(
-                                    controller: bc
-                                        .read<EditState>()
-                                        .textEditingControllerContent),
+                                  controller: bc
+                                      .read<EditState>()
+                                      .textEditingControllerContent,
+                                ),
                               ],
                               mainAxisAlignment: MainAxisAlignment.center,
                             ),
@@ -98,7 +101,8 @@ class Edit extends StatelessWidget {
                                     scrollPhysics:
                                         const BouncingScrollPhysics(),
                                     decoration: const InputDecoration(
-                                        border: InputBorder.none),
+                                      border: InputBorder.none,
+                                    ),
                                     controller: bc
                                         .read<EditState>()
                                         .textEditingControllerContent,
@@ -152,13 +156,17 @@ class Edit extends StatelessWidget {
                                     .read<EditState>()
                                     .textEditingControllerContent;
                                 final startIndex = max(
-                                  min(textEditing.selection.baseOffset,
-                                      textEditing.selection.extentOffset),
+                                  min(
+                                    textEditing.selection.baseOffset,
+                                    textEditing.selection.extentOffset,
+                                  ),
                                   0,
                                 );
                                 final endIndex = max(
-                                  max(textEditing.selection.baseOffset,
-                                      textEditing.selection.extentOffset),
+                                  max(
+                                    textEditing.selection.baseOffset,
+                                    textEditing.selection.extentOffset,
+                                  ),
                                   0,
                                 );
                                 final contentList = textEditing.text.split("");
@@ -214,9 +222,7 @@ class Edit extends StatelessWidget {
         );
         return await remoteDataSource.getState;
       }), builder: (bc, futureState) {
-        if (futureState.hasError) {
-          print("${futureState.error}");
-        }
+        if (futureState.hasError) print("${futureState.error}");
         if (futureState.connectionState != ConnectionState.done) {
           return const Center(
             child: CircularProgressIndicator(),
@@ -257,7 +263,7 @@ class Edit extends StatelessWidget {
               ),
               "value": () {
                 print("save");
-              }
+              },
             },
             {
               "content": Text("保存到本地"),
@@ -275,6 +281,54 @@ class Edit extends StatelessWidget {
                 ),
               ),
               "value": () {
+                showDialog(
+                    context: bc,
+                    builder: (bc) {
+                      return AlertDialog(
+                        content: SizedBox(
+                          width: MediaQuery.of(bc).size.width * 0.6,
+                          height: MediaQuery.of(bc).size.height * 0.8,
+                          child: Container(
+                            child: FutureBuilder(
+                              future: DeviceLocalStorage.getOnlyElem.loadState,
+                              builder: (bc, futureState) {
+                                if (futureState.hasError) {
+                                  print(futureState.error);
+                                  return Center(
+                                    child: Text(futureState.error.toString()),
+                                  );
+                                }
+                                if (futureState.connectionState !=
+                                    ConnectionState.done) {
+                                  return Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+                                return ListView(
+                                  shrinkWrap: true,
+                                  children: [
+                                    BookIndex.createLibChild(
+                                        DeviceLocalStorage
+                                            .getOnlyElem.rootIndexSource!.child,
+                                        useServerSource: DeviceLocalStorage
+                                            .getOnlyElem.serverSource,
+                                        rootIndexSource: DeviceLocalStorage
+                                            .getOnlyElem.rootIndexSource!,
+                                        showBook: false,
+                                        onTap: (indexSource) => print(
+                                            indexSource.getCompletePath()),
+                                      dirDownPopupMenus: [
+                                        PopupMenuItem<Function>(child: Text("保存到此文件夹"))
+                                      ]
+                                    )
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      );
+                    });
                 print("save");
               }
             },
@@ -296,8 +350,8 @@ class Edit extends StatelessWidget {
               "value": () {
                 controller.text = "";
                 print("delete");
-              }
-            }
+              },
+            },
           ]
               .map((e) => PopupMenuItem(
                     value: e["value"] as Function,

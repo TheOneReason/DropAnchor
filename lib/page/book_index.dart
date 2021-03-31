@@ -6,10 +6,34 @@ import 'package:flutter/material.dart';
 import 'package:drop_anchor/model/index_source.dart';
 import 'package:drop_anchor/widget/free_popup_menu_button.dart';
 
-FreeExpansionPanel indexSourceCreateView(IndexSource indexSource,
-    {
-    ServerSourceBase? useServerSource,
-    IndexSource? rootIndexSource}) {
+typedef onTapIndexSourceElemCallback = void Function(IndexSource);
+
+void setShowIndexSource({
+  required IndexSource indexSource,
+  required ServerSourceBase useServerSource,
+  required IndexSource rootIndexSource,
+}) {
+  AppDataSource.getOnlyExist.activationIndexSourceManage
+      .fromLocalReadIndexSource(
+    useServerSource,
+    rootIndexSource: rootIndexSource,
+    showIndexSource: indexSource,
+  );
+  AppDataSource.getOnlyExist.activationIndexSourceManage.setShowIndexSource =
+      indexSource;
+  AppDataSource.getOnlyExist.notifyListeners();
+}
+
+/// 下拉子元素内容渲染
+FreeExpansionPanel indexSourceCreateView(
+  IndexSource indexSource, {
+  required ServerSourceBase? useServerSource,
+  required IndexSource rootIndexSource,
+  required bool showBook,
+  onTapIndexSourceElemCallback? onTap,
+  List<PopupMenuItem<Function>>? dirDownPopupMenus,
+  List<PopupMenuItem<Function>>? fileDownPopupMenus,
+}) {
   assert(
     (useServerSource == null && rootIndexSource == null) ||
         (useServerSource != null && rootIndexSource != null),
@@ -33,44 +57,52 @@ FreeExpansionPanel indexSourceCreateView(IndexSource indexSource,
             0,
             0,
           ),
-          child: BookIndex.createLibChild(indexSource.child,
-              useServerSource: useServerSource,
-              rootIndexSource: rootIndexSource,
-              ),
+          //向下传递
+          child: BookIndex.createLibChild(
+            indexSource.child,
+            useServerSource: useServerSource,
+            rootIndexSource: rootIndexSource,
+            showBook: showBook,
+            onTap: onTap,
+            dirDownPopupMenus: dirDownPopupMenus,
+            fileDownPopupMenus: fileDownPopupMenus,
+          ),
         ),
         headerBuilder: (bc, openState) => FreePopupMenuButton<Function>(
-          padding: EdgeInsets.all(0),
+          // onTap: onTap != null ? () => onTap(indexSource) : null,
+          padding: const EdgeInsets.all(0),
           enabled: true,
-          offset: Offset(10, 10),
+          offset: const Offset(10, 10),
           onSelected: (useF) {
             useF();
           },
           itemBuilder: (BuildContext context) {
             return [
+              ...(dirDownPopupMenus ?? []),
               PopupMenuItem(
-                child: Text("修改名称"),
+                child: const Text("修改名称"),
                 value: () {
                   print("修改名称");
                 },
               ),
               PopupMenuItem(
-                child: Text("添加子文件夹"),
+                child: const Text("添加子文件夹"),
                 value: () {
                   print("添加子文件夹");
                 },
               ),
               PopupMenuItem(
-                child: Text("创建新文件"),
+                child: const Text("创建新文件"),
                 value: () {
                   print("创建新文件");
                 },
-              )
+              ),
             ];
           },
           child: ListTile(
             title: Text(
               indexSource.name,
-              style: const TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 14),
             ),
             leading: SizedBox(
               child: indexSourceTypeLogo(indexSource.type,
@@ -87,116 +119,123 @@ FreeExpansionPanel indexSourceCreateView(IndexSource indexSource,
         canTapOnHeader: true,
         openStateIcon: Container(),
         closeStateIcon: Container(),
-        headerBuilder: (bc, openState) => PopupMenuButton<Function>(
-          onSelected: (selectRunFunc) {
-            selectRunFunc();
-          },
-          itemBuilder: (bc) => [
-            PopupMenuItem(
-              child: const Text("查看"),
-              value: () {
-                if (useServerSource != null && rootIndexSource != null) {
-                  AppDataSource.getOnlyExist.activationIndexSourceManage
-                      .fromLocalReadIndexSource(
-                    useServerSource,
-                    rootIndexSource: rootIndexSource,
-                    showIndexSource: indexSource,
-                  );
-                }
-                AppDataSource.getOnlyExist.activationIndexSourceManage
-                    .setShowIndexSource = indexSource;
-                AppDataSource.getOnlyExist.notifyListeners();
-              },
-            ),
-            PopupMenuItem(
-              child: const Text("修改"),
-              value: () {
-                print("修改");
-              },
-            ),
-            PopupMenuItem(
-              child: const Text("下载"),
-              value: () {
-                print("下载");
-              },
-            ),
-            PopupMenuItem(
-              child: const Text("删除"),
-              value: () {
-                showDialog(
-                    context: bc,
-                    builder: (bc) {
-                      return AlertDialog(
-                        content:
-                            Text("是否删除 ${indexSource.getCompletePath()} ?"),
-                        actions: [
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(bc);
-                            },
-                            child: Text("取消"),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              showDialog(
-                                context: bc,
-                                builder: (bc) => FutureBuilder(
-                                  future: nowTargetServer!.delete(indexSource),
-                                  builder: (bc, futureState) {
-                                    if (futureState.connectionState !=
-                                        ConnectionState.done) {
-                                      return CircularProgressIndicator();
-                                    }
-                                    Future(() => Navigator.of(bc).pop()).then(
-                                        (value) => Navigator.of(bc).pop());
-                                    return Container();
-                                  },
-                                ),
-                              );
-                            },
-                            child: Text("确定"),
-                            style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(Colors.red),
-                              textStyle: MaterialStateProperty.all(
-                                TextStyle(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+        headerBuilder: (bc, openState) => FreePopupMenuButton<Function>(
+            onSelected: (selectRunFunc) {
+              selectRunFunc();
+            },
+            itemBuilder: (bc) => [
+                  ...(fileDownPopupMenus ?? []),
+                  PopupMenuItem(
+                    child: const Text("查看"),
+                    value: () {
+                      setShowIndexSource(
+                        indexSource: indexSource,
+                        useServerSource: useServerSource!,
+                        rootIndexSource: rootIndexSource,
                       );
-                    });
-                print("删除");
-              },
+                    },
+                  ),
+                  PopupMenuItem(
+                    child: const Text("修改"),
+                    value: () {
+                      print("修改");
+                    },
+                  ),
+                  PopupMenuItem(
+                    child: const Text("下载"),
+                    value: () {
+                      print("下载");
+                    },
+                  ),
+                  PopupMenuItem(
+                    child: const Text("删除"),
+                    value: () {
+                      showDialog(
+                          context: bc,
+                          builder: (bc) {
+                            return AlertDialog(
+                              content: Text(
+                                "是否删除 ${indexSource.getCompletePath()} ?",
+                              ),
+                              actions: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(bc);
+                                  },
+                                  child: const Text("取消"),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    showDialog(
+                                      context: bc,
+                                      builder: (bc) => FutureBuilder(
+                                        future: nowTargetServer!
+                                            .delete(indexSource),
+                                        builder: (bc, futureState) {
+                                          if (futureState.connectionState !=
+                                              ConnectionState.done) {
+                                            return CircularProgressIndicator();
+                                          }
+                                          Future(() => Navigator.of(bc).pop())
+                                              .then((value) =>
+                                                  Navigator.of(bc).pop());
+                                          return Container();
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  child: const Text("确定"),
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all(Colors.red),
+                                    textStyle: MaterialStateProperty.all(
+                                      TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          });
+                      print("删除");
+                    },
+                  ),
+                ],
+            child: ListTile(
+              title: Text(
+                indexSource.name,
+                style: const TextStyle(fontSize: 14),
+              ),
+              leading: SizedBox(
+                child: indexSourceTypeLogo(indexSource.type),
+                width: 35,
+              ),
             ),
-          ],
-          child: ListTile(
-            title: Text(
-              indexSource.name,
-              style: const TextStyle(fontSize: 16),
+            offset: const Offset(
+              0,
+              40,
             ),
-            leading: SizedBox(
-              child: indexSourceTypeLogo(indexSource.type),
-              width: 35,
-            ),
-          ),
-          offset: const Offset(
-            0,
-            40,
-          ),
-        ),
+            onTap: () {
+              onTap != null ? (() => onTap(indexSource))() : null;
+            }),
         body: Container(),
       );
   }
 }
 
 class BookIndex extends StatelessWidget {
-  static Widget createLibChild(List<IndexSource> childData,
-      {
-      ServerSourceBase? useServerSource,
-      IndexSource? rootIndexSource}) {
+  /// 下拉子元素框架
+  static Widget createLibChild(
+    List<IndexSource> childData, {
+    required ServerSourceBase? useServerSource,
+    required IndexSource rootIndexSource,
+    onTapIndexSourceElemCallback? onTap,
+    bool showBook = true,
+    List<PopupMenuItem<Function>>? dirDownPopupMenus,
+    List<PopupMenuItem<Function>>? fileDownPopupMenus,
+  }) {
+    childData = List.from(childData);
     return SecurityStatefulBuilder(
       builder: (bc, ns) {
         return Column(
@@ -205,14 +244,25 @@ class BookIndex extends StatelessWidget {
               elevation: 0,
               expansionCallback: (index, openState) {
                 childData[index].isOpenChildList = !openState;
+
                 ns(() => null);
               },
               expandedHeaderPadding: const EdgeInsets.all(0),
-              children: childData
+              children: (showBook
+                      ? childData
+                      : (childData
+                        ..removeWhere(
+                            (element) => element.type == FsFileType.FILE)))
                   .map(
-                    (e) => indexSourceCreateView(e,
-                        useServerSource: useServerSource,
-                        rootIndexSource: rootIndexSource,),
+                    (e) => indexSourceCreateView(
+                      e,
+                      useServerSource: useServerSource,
+                      rootIndexSource: rootIndexSource,
+                      showBook: showBook,
+                      onTap: onTap,
+                      fileDownPopupMenus: fileDownPopupMenus,
+                      dirDownPopupMenus: dirDownPopupMenus,
+                    ),
                   )
                   .toList(),
             )
@@ -222,14 +272,33 @@ class BookIndex extends StatelessWidget {
     );
   }
 
+  late ServerSourceBase? useServerSource;
+  late IndexSource rootIndexSource;
+  late List<PopupMenuItem<Function>>? dirDownPopupMenus;
+  late List<PopupMenuItem<Function>>? fileDownPopupMenus;
+
+  BookIndex({
+    ServerSourceBase? useServerSource,
+    IndexSource? rootIndexSource,
+    this.dirDownPopupMenus,
+    this.fileDownPopupMenus,
+  }) : assert(
+          (useServerSource == null && rootIndexSource == null) ||
+              (useServerSource != null && rootIndexSource != null),
+        ) {
+    //抹除来源差异
+    this.useServerSource = useServerSource ??
+        AppDataSource.getOnlyExist.activationIndexSourceManage.serverSource;
+    this.rootIndexSource = (rootIndexSource ??
+        AppDataSource
+            .getOnlyExist.activationIndexSourceManage.rootIndexSource)!;
+  }
+
   @override
   Widget build(BuildContext context) {
     final rootChild = <IndexSource>[];
-    if (AppDataSource
-            .getOnlyExist.activationIndexSourceManage.rootIndexSource !=
-        null) {
-      rootChild.addAll(AppDataSource
-          .getOnlyExist.activationIndexSourceManage.rootIndexSource!.child);
+    if (useServerSource != null) {
+      rootChild.addAll(rootIndexSource.child);
     }
     return ListView(
       physics: const BouncingScrollPhysics(),
@@ -238,7 +307,20 @@ class BookIndex extends StatelessWidget {
         const SizedBox(
           height: 10,
         ),
-        createLibChild(rootChild)
+        createLibChild(
+          rootChild,
+          useServerSource: useServerSource,
+          rootIndexSource: rootIndexSource,
+          dirDownPopupMenus: dirDownPopupMenus,
+          fileDownPopupMenus: fileDownPopupMenus,
+          onTap: (indexSource) => useServerSource != null
+              ? setShowIndexSource(
+                  indexSource: indexSource,
+                  useServerSource: useServerSource!,
+                  rootIndexSource: rootIndexSource,
+                )
+              : null,
+        )
       ],
     );
   }

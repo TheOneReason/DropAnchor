@@ -39,94 +39,188 @@ class IndexFrameState extends SecurityState<IndexFrame>
         children: widget.showPageList,
       ),
       bottomNavigationBar: Container(
-        child: TabBar(
-          labelColor: Colors.black87,
-          unselectedLabelColor: Colors.black54,
-          controller: tabController,
-          indicatorWeight: 3.0,
-          unselectedLabelStyle: TextStyle(fontSize: 12.0),
-          tabs: [
-            FittedBox(
-              child: Row(
-                children: [
-                  Image.asset(
-                    "./assets/redb.png",
-                    width: 36,
+        padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
+        child: LayoutBuilder(builder: (bc,con){
+          if(con.maxWidth<900){
+            return TabBar(
+              labelColor: Colors.black87,
+              unselectedLabelColor: Colors.black54,
+              controller: tabController,
+              indicatorWeight: 3.0,
+              unselectedLabelStyle: TextStyle(fontSize: 12.0),
+              tabs: [
+                FittedBox(
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        "./assets/redb.png",
+                        width: 36,
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      FittedBox(
+                        child: const Text(
+                          "Show",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ],
+                    mainAxisSize: MainAxisSize.min,
                   ),
-                  const SizedBox(
-                    height: 1,
-                  ),
-                  FittedBox(
-                    child: const Text(
-                      "Show",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
-                ],
-                mainAxisSize: MainAxisSize.min,
-              ),
-            ),
-            FittedBox(
-              child: Row(
-                children: [
-                  Image.asset(
-                    "./assets/blues.png",
-                    width: 36,
-                  ),
-                  const SizedBox(
-                    height: 1,
-                  ),
-                  FittedBox(
-                    child: const Text(
-                      "Lib",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  )
-                ],
-                mainAxisSize: MainAxisSize.min,
-              ),
-            ),
-            FittedBox(
-                child: Row(
-              children: [
-                Image.asset(
-                  "./assets/pc.png",
-                  width: 36,
-                ),
-                const SizedBox(
-                  height: 1,
                 ),
                 FittedBox(
-                  child: const Text(
-                    "Local",
-                    style: TextStyle(fontSize: 16),
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        "./assets/blues.png",
+                        width: 30,
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      FittedBox(
+                        child: const Text(
+                          "Lib",
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      )
+                    ],
+                    mainAxisSize: MainAxisSize.min,
+                  ),
+                ),
+                FittedBox(
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          "./assets/pc.png",
+                          width: 36,
+                        ),
+                        const SizedBox(
+                          width: 4,
+                        ),
+                        FittedBox(
+                          child: const Text(
+                            "Local",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                      ],
+                      mainAxisSize: MainAxisSize.min,
+                    )),
+                FittedBox(
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        "./assets/setting.png",
+                        width: 36,
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      FittedBox(
+                        child: const Text(
+                          "Setting",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ],
+                    mainAxisSize: MainAxisSize.min,
                   ),
                 ),
               ],
-              mainAxisSize: MainAxisSize.min,
-            )),
-            FittedBox(
-              child: Row(
-                children: [
-                  Image.asset(
-                    "./assets/setting.png",
-                    width: 36,
+            );
+          }else{
+            return  TabBar(
+              labelColor: Colors.black87,
+              unselectedLabelColor: Colors.black54,
+              controller: tabController,
+              indicatorWeight: 3.0,
+              unselectedLabelStyle: TextStyle(fontSize: 12.0),
+              tabs: [
+                FittedBox(
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        "./assets/redb.png",
+                        width: 36,
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      FittedBox(
+                        child: const Text(
+                          "Show",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ],
+                    mainAxisSize: MainAxisSize.min,
                   ),
-                  const SizedBox(
-                    height: 1,
+                ),
+                FittedBox(
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        "./assets/blues.png",
+                        width: 30,
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      FittedBox(
+                        child: const Text(
+                          "Lib",
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      )
+                    ],
+                    mainAxisSize: MainAxisSize.min,
                   ),
-                  FittedBox(
-                    child: const Text(
-                      "Setting",
-                      style: TextStyle(fontSize: 16),
-                    ),
+                ),
+                FittedBox(
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          "./assets/pc.png",
+                          width: 36,
+                        ),
+                        const SizedBox(
+                          width: 4,
+                        ),
+                        FittedBox(
+                          child: const Text(
+                            "Local",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                      ],
+                      mainAxisSize: MainAxisSize.min,
+                    )),
+                FittedBox(
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        "./assets/setting.png",
+                        width: 36,
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      FittedBox(
+                        child: const Text(
+                          "Setting",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ],
+                    mainAxisSize: MainAxisSize.min,
                   ),
-                ],
-                mainAxisSize: MainAxisSize.min,
-              ),
-            ),
-          ],
-        ),
+                ),
+              ],
+            );
+          }
+        } ,) ,
         color: Colors.white,
       ),
     );

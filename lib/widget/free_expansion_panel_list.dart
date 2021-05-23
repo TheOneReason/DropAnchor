@@ -128,7 +128,7 @@ class FreeExpansionPanelList extends StatefulWidget {
 
   final Color? dividerColor;
 
-  final int elevation;
+  final double elevation;
 
   @override
   State<StatefulWidget> createState() => _FreeExpansionPanelListState();

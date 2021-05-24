@@ -1,5 +1,5 @@
 import 'package:drop_anchor/api/server_public_data.dart';
-import 'package:drop_anchor/model/server_source.dart';
+import 'package:drop_anchor/model/service_source.dart';
 import 'package:drop_anchor/state/app.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +12,7 @@ class TestPage extends StatefulWidget {
 }
 
 class _TestPageState extends State<TestPage> {
-  ServerSourceBase? activationServer;
+  ServiceSourceBase? activationServer;
   _TestPageState():activationServer=null;
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class _TestPageState extends State<TestPage> {
         }
         return ListView(
           children: [
-            DropdownButton<ServerSourceBase>(
+            DropdownButton<ServiceSourceBase>(
               value:activationServer,
               items: AppDataSource.getOnlyExist.manageRemoteServer.listServer
                   .map(
@@ -44,7 +44,7 @@ class _TestPageState extends State<TestPage> {
             ElevatedButton(
               onPressed: () {
                 if(activationServer!=null){
-                  getServerPublicDataIndex(activationServer!).then((v)=>print(v.toJson()));
+                  // getServerPublicDataIndex(activationServer!).then((v)=>print(v.toJson()));
                 }
               },
               child: Text("TestGetPublicDataIndex"),

@@ -1,16 +1,17 @@
-import 'package:drop_anchor/model/server_source.dart';
+import 'package:drop_anchor/model/service_source.dart';
 import 'package:drop_anchor/state/data.dart';
 import 'package:drop_anchor/tool/security_set_state.dart';
 import 'package:drop_anchor/widget/free_expansion_panel_list.dart';
 import 'package:flutter/material.dart';
 import 'package:drop_anchor/model/index_source.dart';
 import 'package:drop_anchor/widget/free_popup_menu_button.dart';
+import 'package:provider/provider.dart';
 
 typedef onTapIndexSourceElemCallback = void Function(IndexSource);
 
 void setShowIndexSource({
   required IndexSource indexSource,
-  required ServerSourceBase useServerSource,
+  required ServiceSourceBase useServerSource,
   required IndexSource rootIndexSource,
 }) {
   AppDataSource.getOnlyExist.activationIndexSourceManage
@@ -24,10 +25,62 @@ void setShowIndexSource({
   AppDataSource.getOnlyExist.notifyListeners();
 }
 
-/// 下拉子元素内容渲染
+void showDelAlertBox(
+  BuildContext bc, {
+  required IndexSource indexSource,
+  required ServiceSourceBase? nowTargetServer,
+}) {
+  showDialog(
+    context: bc,
+    builder: (bc) {
+      return AlertDialog(
+        content: Text(
+          "是否删除 ${indexSource.getCompletePath()} ?",
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(bc);
+            },
+            child: const Text("取消"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              showDialog(
+                context: bc,
+                builder: (bc) => FutureBuilder(
+                  future: nowTargetServer!.delete(indexSource),
+                  builder: (bc, futureState) {
+                    if (futureState.connectionState != ConnectionState.done) {
+                      return CircularProgressIndicator();
+                    }
+                    Future(() => Navigator.of(bc).pop())
+                        .then((value) => Navigator.of(bc).pop());
+                    return Container();
+                  },
+                ),
+              );
+            },
+            child: const Text("确定"),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.red),
+              textStyle: MaterialStateProperty.all(
+                TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+// 下拉子元素内容渲染
 FreeExpansionPanel indexSourceCreateView(
   IndexSource indexSource, {
-  required ServerSourceBase? useServerSource,
+  required ServiceSourceBase? useServerSource,
   required IndexSource rootIndexSource,
   required bool showBook,
   onTapIndexSourceElemCallback? onTap,
@@ -39,9 +92,10 @@ FreeExpansionPanel indexSourceCreateView(
         (useServerSource != null && rootIndexSource != null),
   );
 
-  // 抹除 local source 和 net source 的 ServerSourceBase 来源差异
-  final nowTargetServer = useServerSource ??
-      AppDataSource.getOnlyExist.activationIndexSourceManage.serverSource;
+  // 抹除 local source 和 net source 的 ServiceSourceBase 来源差异
+  final nowTargetService = useServerSource ??
+      AppDataSource.getOnlyExist.activationIndexSourceManage.serviceSource;
+
   switch (indexSource.type) {
     //DIR
     case 0:
@@ -145,59 +199,19 @@ FreeExpansionPanel indexSourceCreateView(
                     child: const Text("下载"),
                     value: () {
                       print("下载");
+                      showDelAlertBox(bc,
+                          nowTargetServer: nowTargetService,
+                          indexSource: indexSource);
                     },
                   ),
                   PopupMenuItem(
                     child: const Text("删除"),
-                    value: () {
-                      showDialog(
-                          context: bc,
-                          builder: (bc) {
-                            return AlertDialog(
-                              content: Text(
-                                "是否删除 ${indexSource.getCompletePath()} ?",
-                              ),
-                              actions: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.pop(bc);
-                                  },
-                                  child: const Text("取消"),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    showDialog(
-                                      context: bc,
-                                      builder: (bc) => FutureBuilder(
-                                        future: nowTargetServer!
-                                            .delete(indexSource),
-                                        builder: (bc, futureState) {
-                                          if (futureState.connectionState !=
-                                              ConnectionState.done) {
-                                            return CircularProgressIndicator();
-                                          }
-                                          Future(() => Navigator.of(bc).pop())
-                                              .then((value) =>
-                                                  Navigator.of(bc).pop());
-                                          return Container();
-                                        },
-                                      ),
-                                    );
-                                  },
-                                  child: const Text("确定"),
-                                  style: ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStateProperty.all(Colors.red),
-                                    textStyle: MaterialStateProperty.all(
-                                      TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            );
-                          });
+                    value: () async {
+                      //
+                      nowTargetService?.delete(indexSource);
+                      // 在删除后更新内容
+                      // 目前无法使用
+                      // await Provider.of<ActivationIndexSourceManage>(bc).reFromRemoteServerReadIndexSource();
                       print("删除");
                     },
                   ),
@@ -225,10 +239,10 @@ FreeExpansionPanel indexSourceCreateView(
 }
 
 class BookIndex extends StatelessWidget {
-  /// 下拉子元素框架
+  // 下拉子元素框架
   static Widget createLibChild(
     List<IndexSource> childData, {
-    required ServerSourceBase? useServerSource,
+    required ServiceSourceBase? useServerSource,
     required IndexSource rootIndexSource,
     onTapIndexSourceElemCallback? onTap,
     bool showBook = true,
@@ -244,7 +258,6 @@ class BookIndex extends StatelessWidget {
               elevation: 0,
               expansionCallback: (index, openState) {
                 childData[index].isOpenChildList = !openState;
-
                 ns(() => null);
               },
               expandedHeaderPadding: const EdgeInsets.all(0),
@@ -272,13 +285,13 @@ class BookIndex extends StatelessWidget {
     );
   }
 
-  late ServerSourceBase? useServerSource;
+  late ServiceSourceBase? useServerSource;
   late IndexSource rootIndexSource;
   late List<PopupMenuItem<Function>>? dirDownPopupMenus;
   late List<PopupMenuItem<Function>>? fileDownPopupMenus;
 
   BookIndex({
-    ServerSourceBase? useServerSource,
+    ServiceSourceBase? useServerSource,
     IndexSource? rootIndexSource,
     this.dirDownPopupMenus,
     this.fileDownPopupMenus,
@@ -286,9 +299,9 @@ class BookIndex extends StatelessWidget {
           (useServerSource == null && rootIndexSource == null) ||
               (useServerSource != null && rootIndexSource != null),
         ) {
-    //抹除来源差异
+    // 抹除来源差异
     this.useServerSource = useServerSource ??
-        AppDataSource.getOnlyExist.activationIndexSourceManage.serverSource;
+        AppDataSource.getOnlyExist.activationIndexSourceManage.serviceSource;
     this.rootIndexSource = (rootIndexSource ??
         AppDataSource
             .getOnlyExist.activationIndexSourceManage.rootIndexSource)!;
@@ -313,6 +326,9 @@ class BookIndex extends StatelessWidget {
           rootIndexSource: rootIndexSource,
           dirDownPopupMenus: dirDownPopupMenus,
           fileDownPopupMenus: fileDownPopupMenus,
+          // 将点击的文件并且来源挂载到全局 无论是来着 Local 还是 network
+          // 如果挂载点不存在则不执行任何操作
+          // 该函数将向下传递
           onTap: (indexSource) => useServerSource != null
               ? setShowIndexSource(
                   indexSource: indexSource,
@@ -325,3 +341,11 @@ class BookIndex extends StatelessWidget {
     );
   }
 }
+
+/*
+* ChangeNotifierProvider<ActivationIndexSourceManage>.value(
+      value: AppDataSource().activationIndexSourceManage,
+      child: ,
+    );
+*
+* */

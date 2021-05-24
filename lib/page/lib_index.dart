@@ -4,7 +4,7 @@ import 'package:drop_anchor/tool/text_input_filter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:drop_anchor/state/data.dart';
-import 'package:drop_anchor/model/server_source.dart';
+import 'package:drop_anchor/model/service_source.dart';
 import 'package:flutter/services.dart';
 
 class LibIndex extends StatefulWidget {
@@ -48,6 +48,7 @@ class LibIndexState extends SecurityState<LibIndex> {
                               child: Image.asset(
                                 "assets/pen.png",
                               ),
+                              //设置标题修改状态
                               onPressed: () => ns(() => useStatic = !useStatic),
                             ),
                             width: 30,
@@ -70,7 +71,7 @@ class LibIndexState extends SecurityState<LibIndex> {
             ));
   }
 
-  Widget createLibCard(ServerSource sourceElem, AppDataSource appDataSource) {
+  Widget createLibCard(ServiceSource sourceElem, AppDataSource appDataSource) {
     return Container(
       child: Material(
         color: Colors.white,
@@ -124,10 +125,10 @@ class LibIndexState extends SecurityState<LibIndex> {
                                 child: ElevatedButton(
                                   onPressed: () {
                                     setState(
+                                      // 从全局对象发出请求并且写入全局
                                       () => appDataSource
                                           .activationIndexSourceManage
-                                          .fromRemoteServerReadIndexSource(
-                                              sourceElem)
+                                          .fromRemoteServerReadIndexSource(sourceElem)
                                           .then(
                                         (value) {
                                           showDialog(
@@ -168,7 +169,7 @@ class LibIndexState extends SecurityState<LibIndex> {
                                 width: 100,
                               ),
                               (appDataSource.activationIndexSourceManage
-                                              .serverSource) ==
+                                              .serviceSource) ==
                                           sourceElem &&
                                       (appDataSource.activationIndexSourceManage
                                               .activationLoad) !=
@@ -332,38 +333,40 @@ class LibIndexState extends SecurityState<LibIndex> {
                   "InputFilter": inputNumberFilter
                 },
               ]
-                  .map((e) => Container(
-                        height: 40,
-                        child: Row(
-                          children: [
-                            Text(e["Label"] as String),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Expanded(
-                              child: SizedBox(
-                                child: TextField(
-                                  inputFormatters: e["InputFilter"] != null
-                                      ? [e["InputFilter"] as TextInputFormatter]
-                                      : [],
-                                  controller:
-                                      e["Controller"] as TextEditingController,
-                                  keyboardType:
-                                      e["KeyboardType"] as TextInputType,
-                                  onChanged:
-                                      e["OnChanged"] as ValueChanged<String>,
-                                  decoration: InputDecoration(
-                                    isDense: true,
-                                    border: InputBorder.none,
-                                    filled: true,
-                                  ),
+                  .map(
+                    (e) => Container(
+                      height: 40,
+                      child: Row(
+                        children: [
+                          Text(e["Label"] as String),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: SizedBox(
+                              child: TextField(
+                                inputFormatters: e["InputFilter"] != null
+                                    ? [e["InputFilter"] as TextInputFormatter]
+                                    : [],
+                                controller:
+                                    e["Controller"] as TextEditingController,
+                                keyboardType:
+                                    e["KeyboardType"] as TextInputType,
+                                onChanged:
+                                    e["OnChanged"] as ValueChanged<String>,
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  border: InputBorder.none,
+                                  filled: true,
                                 ),
-                                height: 30,
                               ),
-                            )
-                          ],
-                        ),
-                      ))
+                              height: 30,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
                   .toList(),
               SecurityStatefulBuilder(builder: (bc, ns) {
                 updateButtonState = () => ns(() => null);
@@ -371,7 +374,9 @@ class LibIndexState extends SecurityState<LibIndex> {
                   width: double.infinity,
                   height: 45,
                   padding: EdgeInsets.symmetric(vertical: 8),
+                  //按钮 创建新Lib
                   child: ElevatedButton(
+                    //判断之前TextInput是否填写完成
                     onPressed: nameController.text.isNotEmpty &&
                             sourceController.text.isNotEmpty &&
                             portController.text.isNotEmpty
@@ -379,6 +384,7 @@ class LibIndexState extends SecurityState<LibIndex> {
                             final name = nameController.text;
                             final source = sourceController.text;
                             final port = int.parse(portController.text);
+                            //添加到全局远程服务器管理对象上
                             appDataSource.manageRemoteServer.addServer(
                               name,
                               source,
@@ -423,6 +429,7 @@ class LibIndexState extends SecurityState<LibIndex> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        // 显示创建新Lib页面
         onPressed: () {
           showDialog(
             context: context,

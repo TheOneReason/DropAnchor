@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'package:drop_anchor/model/service_source.dart';
+
+import 'api_res_package.dart';
 import 'index_source.dart';
 
 abstract class StorageSystemInteractiveInterface {
@@ -26,6 +29,9 @@ abstract class StorageSystemInteractiveInterface {
   }
 
   Future<bool> rename() {
+    throw UnimplementedError();
+  }
+  Future<ApiResPackage> getServerPublicDataIndex(){
     throw UnimplementedError();
   }
 }

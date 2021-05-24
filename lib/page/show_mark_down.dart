@@ -4,7 +4,7 @@ import 'package:drop_anchor/error/api_error.dart';
 import 'package:drop_anchor/model/file_type.dart';
 import 'package:drop_anchor/model/index_source.dart';
 import 'package:drop_anchor/model/remote_data_source.dart';
-import 'package:drop_anchor/model/server_source.dart';
+import 'package:drop_anchor/model/service_source.dart';
 import 'package:drop_anchor/page/preview.dart';
 import 'package:drop_anchor/state/app.dart';
 import 'package:drop_anchor/tool/security_set_state.dart';
@@ -38,7 +38,7 @@ class ShowMarkdown extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        "Use Lib : ${AppDataSource.getOnlyExist.activationIndexSourceManage.serverSource?.name ?? ""}",
+                        "Use Lib : ${AppDataSource.getOnlyExist.activationIndexSourceManage.serviceSource?.name ?? ""}",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 12,
@@ -61,7 +61,7 @@ class ShowMarkdown extends StatelessWidget {
 
 
   Widget createMarkdownView(
-      ServerSourceBase serverSource, IndexSource indexSource) {
+      ServiceSourceBase serverSource, IndexSource indexSource) {
     return FutureBuilder(
       future: Future<dynamic>(() async {
         await AppDataSource
@@ -130,7 +130,7 @@ class ShowMarkdown extends StatelessWidget {
                                 fromServerSource: bc
                                     .read<AppDataSource>()
                                     .activationIndexSourceManage
-                                    .serverSource!,
+                                    .serviceSource!,
                               ),
                             ),
                           );
@@ -150,7 +150,7 @@ class ShowMarkdown extends StatelessWidget {
                     bc
                         .watch<AppDataSource>()
                         .activationIndexSourceManage
-                        .serverSource!,
+                        .serviceSource!,
                     bc
                         .watch<AppDataSource>()
                         .activationIndexSourceManage

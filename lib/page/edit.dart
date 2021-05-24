@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:drop_anchor/model/index_source.dart';
 import 'package:drop_anchor/model/remote_data_source.dart';
-import 'package:drop_anchor/model/server_source.dart';
+import 'package:drop_anchor/model/service_source.dart';
 import 'package:drop_anchor/page/book_index.dart';
 import 'package:drop_anchor/page/preview.dart';
 import 'package:drop_anchor/state/device_local_storage.dart';
@@ -30,7 +30,7 @@ class EditState with ChangeNotifier, DiagnosticableTreeMixin {
 class Edit extends StatelessWidget {
   IndexSource fromIndexSource;
 
-  ServerSourceBase fromServerSource;
+  ServiceSourceBase fromServerSource;
 
   Edit({required this.fromIndexSource, required this.fromServerSource});
 

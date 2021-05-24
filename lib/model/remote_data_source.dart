@@ -6,8 +6,7 @@ import 'package:drop_anchor/api/state_code.dart';
 import 'package:drop_anchor/error/api_error.dart';
 import 'package:drop_anchor/error/local_error.dart';
 import 'package:drop_anchor/model/index_source.dart';
-import 'package:drop_anchor/model/server_source.dart';
-import 'package:drop_anchor/state/device_local_storage.dart';
+import 'package:drop_anchor/model/service_source.dart';
 import 'package:drop_anchor/tool/persist.dart';
 import 'package:path/path.dart' as path;
 
@@ -37,7 +36,7 @@ class RemoteDataSource {
   late Future<Iterable<int>> getState;
 
   RemoteDataSource.fromIndexSource(IndexSource fromIndexSource,
-      {required ServerSourceBase fromServerSource}) {
+      {required ServiceSourceBase fromServerSource}) {
     if (fromServerSource.token() == LocalStorageServerSource.staticToken) {
       getState = Future<Iterable<int>>(() async {
         final targetPath = path.relative(path.join(
